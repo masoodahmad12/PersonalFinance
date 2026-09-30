@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance Tracker
 
-## Getting Started
+A mobile-friendly personal finance tracker built with Next.js 15, MongoDB Atlas, Tailwind CSS and shadcn/ui.
 
-First, run the development server:
+- **Transactions** of three types: income, expense and amount returned
+- **Actual expense = total expense - amount returned**, and **net savings = income - actual expense**
+- **Categories** per type (payment channels such as POS, Cash or Bills are just categories)
+- **Recurring transactions** (daily, weekly, monthly, yearly, every N periods) that are posted automatically
+- **Dashboard**, **reports** (month vs month, category trends, top categories), search and filters
+- Light, dark and system themes; single-user password login; amounts in PKR, dates in Asia/Karachi
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Local setup
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Create a free MongoDB Atlas cluster, add a database user, allow your IP (or `0.0.0.0/0` for Vercel) under **Network Access**, and copy the connection string.
 
-## Learn More
+3. Generate your login secrets:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm run hash-password
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Copy `.env.example` to `.env.local` and fill in `MONGODB_URI` plus the three values printed by the script.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Start the app and sign in with the password you chose. Default categories are created on first login.
 
-## Deploy on Vercel
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying to Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push the project to a Git repository and import it in Vercel.
+2. Add `MONGODB_URI`, `APP_PASSWORD_HASH`, `AUTH_SECRET` and `CRON_SECRET` under **Project > Settings > Environment Variables**.
+3. Deploy. `vercel.json` schedules `/api/cron/recurring` once a day at 00:05 Pakistan time; Vercel sends `CRON_SECRET` automatically as a Bearer token.
+
+Recurring items are also processed whenever you open the dashboard or the recurring page, so nothing is missed if a cron run is skipped.
+
+## Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript check |
+| `npm run hash-password` | Generate `APP_PASSWORD_HASH`, `AUTH_SECRET` and `CRON_SECRET` |
