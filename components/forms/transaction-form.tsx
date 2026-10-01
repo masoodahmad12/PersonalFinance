@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmButton } from "@/components/confirm-button";
+import { useIsDesktop } from "@/hooks/use-media-query";
 import { todayYmd } from "@/lib/dates";
 import type { TransactionType } from "@/lib/constants";
 import type { TransactionDTO } from "@/lib/types";
@@ -29,6 +30,7 @@ export function TransactionForm({
 }) {
   const [pending, startTransition] = useTransition();
   const isEdit = !!transaction;
+  const isDesktop = useIsDesktop();
 
   const form = useForm<TransactionInput>({
     resolver: zodResolver(transactionSchema),
@@ -96,7 +98,7 @@ export function TransactionForm({
             step="0.01"
             min="0"
             placeholder="0"
-            autoFocus={!isEdit}
+            autoFocus={!isEdit && isDesktop}
             className="h-12 pl-10 text-lg font-semibold tabular"
             aria-invalid={!!errors.amount}
             {...form.register("amount", { valueAsNumber: true })}

@@ -9,6 +9,7 @@ import { createCategory, updateCategory } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CategoryIcon } from "@/components/category-icon";
+import { useIsDesktop } from "@/hooks/use-media-query";
 import { CATEGORY_COLORS, type TransactionType } from "@/lib/constants";
 import { CATEGORY_ICONS } from "@/lib/icons";
 import type { CategoryDTO } from "@/lib/types";
@@ -28,6 +29,7 @@ export function CategoryForm({
 }) {
   const [pending, startTransition] = useTransition();
   const isEdit = !!category;
+  const isDesktop = useIsDesktop();
 
   const form = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema),
@@ -61,7 +63,7 @@ export function CategoryForm({
           <Input
             id="cat-name"
             placeholder="e.g. Groceries"
-            autoFocus={!isEdit}
+            autoFocus={!isEdit && isDesktop}
             className="h-10"
             aria-invalid={!!errors.name}
             {...form.register("name")}
