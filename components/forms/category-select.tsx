@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { CategoryIcon } from "@/components/category-icon";
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useIsDesktop } from "@/hooks/use-media-query";
 import type { TransactionType } from "@/lib/constants";
 import type { CategoryDTO } from "@/lib/types";
@@ -32,7 +33,15 @@ type CategorySelectProps = {
   id?: string;
 };
 
-export function CategorySelect({ type, value, onChange, invalid, id }: CategorySelectProps) {
+export function CategorySelect(props: CategorySelectProps) {
+  return (
+    <Suspense fallback={<Skeleton className="h-10 w-full rounded-lg" />}>
+      <CategorySelectInner {...props} />
+    </Suspense>
+  );
+}
+
+function CategorySelectInner({ type, value, onChange, invalid, id }: CategorySelectProps) {
   const categories = useCategories();
   const isDesktop = useIsDesktop();
   const options = useMemo(
